@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Black Island">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Black Island</title>
+<style>
+:root{color-scheme:dark;--bg:#050505;--panel:#111;--muted:#888;--line:#292929;--white:#f5f5f5}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;min-height:100svh}
+main{max-width:480px;margin:auto;padding:env(safe-area-inset-top) 20px calc(28px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 2px 28px}
+.brand{font-size:12px;letter-spacing:.22em;font-weight:700;color:#aaa}
+.tag{font-size:10px;color:#aaa;border:1px solid #333;padding:6px 9px;border-radius:99px}
+.hero{padding:26px 0 18px;text-align:center}
+.eyebrow{font-size:11px;letter-spacing:.18em;color:#777;text-transform:uppercase}
+h1{font-size:30px;letter-spacing:-.04em;margin:9px 0 8px}
+.sub{color:#858585;font-size:13px;line-height:1.5;margin:0 auto;max-width:290px}
+.stage{margin:34px auto 24px;min-height:210px;display:flex;align-items:center;justify-content:center;position:relative}
+.island{width:174px;min-height:48px;border-radius:28px;background:#000;border:1px solid #242424;box-shadow:0 14px 45px #000,0 0 0 1px #101010;display:flex;align-items:center;justify-content:space-between;padding:8px 13px;transition:width .32s cubic-bezier(.2,.8,.2,1),min-height .32s,border-radius .32s;cursor:pointer;overflow:hidden}
+.island.expanded{width:min(330px,calc(100vw - 54px));min-height:142px;border-radius:27px;display:block;padding:16px}
+.compact-left{display:flex;align-items:center;gap:9px;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:#eaeaea;box-shadow:0 0 10px #fff6}
+.compact-label{font-size:11px;color:#ddd}
+.wave{display:flex;gap:3px;align-items:center;height:18px}
+.wave i{display:block;width:3px;border-radius:4px;background:#ddd;height:7px;animation:wave .75s ease-in-out infinite alternate}
+.wave i:nth-child(2){height:14px;animation-delay:.15s}.wave i:nth-child(3){height:9px;animation-delay:.3s}.wave i:nth-child(4){height:16px;animation-delay:.1s}
+@keyframes wave{to{transform:scaleY(.45);opacity:.55}}
+.expanded-top{display:flex;align-items:center;justify-content:space-between}
+.track{display:flex;align-items:center;gap:12px}
+.cover{width:42px;height:42px;border-radius:9px;background:linear-gradient(145deg,#303030,#080808);display:grid;place-items:center;border:1px solid #383838}
+.cover svg{width:21px}
+.track-title{font-size:13px;font-weight:650}.track-artist{font-size:11px;color:#888;margin-top:4px}
+.close{border:0;background:#202020;color:#aaa;border-radius:50%;width:27px;height:27px;font-size:17px}
+.controls{display:flex;align-items:center;justify-content:center;gap:34px;margin:16px 0 11px}
+.controls button{border:0;background:transparent;color:#eee;font-size:19px;padding:4px}
+.controls .play{width:34px;height:34px;border-radius:50%;background:#eee;color:#050505;font-size:15px}
+.progress{height:3px;background:#343434;border-radius:9px;overflow:hidden}.progress span{display:block;width:36%;height:100%;background:#eee;border-radius:9px}
+.hint{position:absolute;bottom:0;color:#555;font-size:10px;letter-spacing:.12em}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:22px}
+.card{background:linear-gradient(145deg,#141414,#0c0c0c);border:1px solid #242424;border-radius:19px;padding:16px;min-height:112px}
+.card-head{display:flex;align-items:center;justify-content:space-between;color:#999;font-size:11px}
+.card strong{display:block;font-size:22px;letter-spacing:-.04em;margin-top:17px}
+.card small{color:#777;font-size:10px}
+.action{width:100%;margin-top:20px;background:#f1f1f1;color:#090909;border:0;border-radius:15px;padding:15px;font-size:13px;font-weight:650}
+.note{font-size:10px;color:#666;line-height:1.5;text-align:center;margin:18px 8px 0}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:#222;border:1px solid #444;padding:10px 14px;border-radius:99px;font-size:11px;transition:.25s;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<main>
+<header><div class="brand">BLACK ISLAND</div><div class="tag">PROTOTIPO V1</div></header>
+<section class="hero">
+<div class="eyebrow">Minimal interface concept</div>
+<h1>Todo en un solo lugar.</h1>
+<p class="sub">Una experiencia compacta, oscura y discreta para tu iPhone.</p>
+</section>
+<section class="stage">
+<div class="island" id="island" role="button" tabindex="0" aria-label="Expandir reproductor">
+  <div class="compact-left"><span class="dot"></span><span class="compact-label">En reproducción</span></div>
+  <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+</div>
+<div class="hint">TOCA LA ISLA PARA EXPANDIR</div>
+</section>
+<section class="grid">
+<div class="card"><div class="card-head"><span>BATERÍA</span><span>◉</span></div><strong id="battery">--%</strong><small id="charging">Lectura no disponible en navegador</small></div>
+<div class="card"><div class="card-head"><span>ESTADO</span><span>◌</span></div><strong id="status">LISTA</strong><small>Interfaz de demostración</small></div>
+</section>
+<button class="action" id="expandBtn">Abrir reproductor</button>
+<p class="note">Prototipo visual independiente. No modifica iOS, no controla Apple Music todavía y no crea una isla flotante sobre otras aplicaciones.</p>
+</main>
+<div class="toast" id="toast">Modo de demostración</div>
+<script>
+const island=document.getElementById('island'), btn=document.getElementById('expandBtn'), toast=document.getElementById('toast');
+let expanded=false, playing=true;
+function render(){
+ island.classList.toggle('expanded',expanded);
+ if(expanded){
+  island.innerHTML=`<div class="expanded-top"><div class="track"><div class="cover"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div><div class="track-title">Tu música</div><div class="track-artist">Apple Music · integración pendiente</div></div></div><button class="close" id="closeBtn" aria-label="Cerrar">×</button></div><div class="controls"><button id="prev" aria-label="Anterior">|◀</button><button class="play" id="playBtn" aria-label="Reproducir o pausar">${playing?'Ⅱ':'▶'}</button><button id="next" aria-label="Siguiente">▶|</button></div><div class="progress"><span></span></div>`;
+  document.getElementById('closeBtn').onclick=(e)=>{e.stopPropagation();expanded=false;render()};
+  document.getElementById('playBtn').onclick=(e)=>{e.stopPropagation();playing=!playing;render();showToast('Control de demostración')};
+  document.getElementById('prev').onclick=()=>showToast('Control de demostración');
+  document.getElementById('next').onclick=()=>showToast('Control de demostración');
+ }else{
+  island.innerHTML='<div class="compact-left"><span class="dot"></span><span class="compact-label">En reproducción</span></div><div class="wave"><i></i><i></i><i></i><i></i></div>';
+ }
+ btn.textContent=expanded?'Cerrar reproductor':'Abrir reproductor';
+}
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1800)}
+island.addEventListener('click',()=>{expanded=!expanded;render()});
+island.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();expanded=!expanded;render()}});
+btn.addEventListener('click',()=>{expanded=!expanded;render()});
+if('getBattery' in navigator){navigator.getBattery().then(b=>{const update=()=>{document.getElementById('battery').textContent=Math.round(b.level*100)+'%';document.getElementById('charging').textContent=b.charging?'Conectado a corriente':'Nivel estimado'};update();b.addEventListener('levelchange',update);b.addEventListener('chargingchange',update)}).catch(()=>{});}
+render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>
